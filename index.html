@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+</head>
+<body>
+    <form action="">
+        <!-- autocomplete="off"　→自動補完の無効化(候補の非表示) -->
+        <input type="text" autocomplete="off" id="sendmsg"/>
+        <button>Send</button>
+    </form>
+
+    <ul id="messages" style="list-style-type: decimal; font-size: 16px; font-family: Arial;"></ul>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script>
+        var socket = io();
+        $('form').submit(function(){
+            //フォームの値をchat.jsに渡す
+            //emit=Socket.IOのイベントの1つ。
+            //このイベントはクライアント側で呼び出されると、それがnode.jsのサーバーで捕捉されて、何等かの処理を行う
+             //'chat message'は任意の文字
+            socket.emit('chat message',$('#sendmsg').val());
+            
+            //フォームの値が無い場合、falseを返す
+            $('#sendmsg').val('');
+            return false;
+        });
+
+        //chat.jsから返された
+        socket.on('chat message',function(msg){
+            console.log('chat message'); //結果：chat message
+            console.log('message: ' + msg); //結果(aを入力)：message: a
+            $('#messages').append($('<li style="margin-bottom: 5px;">').text(msg));
+        });
+    </script>
+</body>
+</html>
